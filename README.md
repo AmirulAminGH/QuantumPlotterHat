@@ -1,2 +1,4 @@
 # QuantumPlotterHat
-its in the name
+repo for plotter hat version
+
+
