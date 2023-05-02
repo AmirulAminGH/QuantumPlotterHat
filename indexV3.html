@@ -1,0 +1,1023 @@
+
+
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+
+  <meta charset="UTF-8">
+  
+<link rel="apple-touch-icon" type="image/png" href="https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png" />
+<meta name="apple-mobile-web-app-title" content="CodePen">
+
+<link rel="shortcut icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
+
+<link rel="mask-icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" color="#111" />
+
+
+  <title>Q-Plotter</title>
+  
+  <link rel='stylesheet' href='bootstrap-3.3.7-dist/css/bootstrap.css'>
+  <link rel='stylesheet' href='style2.css'>
+  <script src="p5.js"></script>
+  <script src="layerview.js"></script>
+<script>
+   var myCanvas = createCanvas(winWidth, winHeight);
+    myCanvas.parent();
+</script>
+
+
+
+<style>
+.nav-pills > li > a {
+   border-radius: 0;
+}
+
+#wrapper {
+   padding-left: 0;
+   -webkit-transition: all 0.5s ease;
+   -moz-transition: all 0.5s ease;
+   -o-transition: all 0.5s ease;
+   transition: all 0.5s ease;
+   overflow: hidden;
+}
+
+#wrapper.toggled {
+   padding-left: 250px;
+   overflow: hidden;
+}
+
+#sidebar-wrapper {
+   z-index: 1000;
+   position: absolute;
+   left: 250px;
+   width: 0;
+   height: 100%;
+   margin-left: -250px;
+   overflow-y: auto;
+   background: #000;
+   -webkit-transition: all 0.5s ease;
+   -moz-transition: all 0.5s ease;
+   -o-transition: all 0.5s ease;
+   transition: all 0.5s ease;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+   width: 250px;
+}
+
+#page-content-wrapper {
+   position: absolute;
+   padding: 15px;
+   width: 100%;
+   overflow-x: hidden;
+}
+
+.xyz {
+   min-width: 360px;
+}
+
+#wrapper.toggled #page-content-wrapper {
+   position: relative;
+   margin-right: 0px;
+}
+
+.fixed-brand {
+   width: auto;
+}
+/* Sidebar Styles */
+
+.sidebar-nav {
+   position: absolute;
+   top: 0;
+   width: 250px;
+   margin: 0;
+   padding: 0;
+   list-style: none;
+   margin-top: 2px;
+}
+
+.sidebar-nav li {
+   text-indent: 15px;
+   line-height: 40px;
+}
+
+.sidebar-nav li a {
+   display: block;
+   text-decoration: none;
+   color: #999999;
+}
+
+.sidebar-nav li a:hover {
+   text-decoration: none;
+   color: #fff;
+   background: rgba(255, 255, 255, 0.2);
+   border-left: red 2px solid;
+}
+
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus {
+   text-decoration: none;
+}
+
+.sidebar-nav > .sidebar-brand {
+   height: 65px;
+   font-size: 18px;
+   line-height: 60px;
+}
+
+.sidebar-nav > .sidebar-brand a {
+   color: #999999;
+}
+
+.sidebar-nav > .sidebar-brand a:hover {
+   color: #fff;
+   background: none;
+}
+
+.no-margin {
+   margin: 0;
+}
+
+@media (min-width: 768px) {
+   #wrapper {
+      padding-left: 250px;
+   }
+   .fixed-brand {
+      width: 250px;
+   }
+   #wrapper.toggled {
+      padding-left: 0;
+   }
+   #sidebar-wrapper {
+      width: 250px;
+   }
+   #wrapper.toggled #sidebar-wrapper {
+      width: 250px;
+   }
+   #wrapper.toggled-2 #sidebar-wrapper {
+      width: 50px;
+   }
+   #wrapper.toggled-2 #sidebar-wrapper:hover {
+      width: 250px;
+   }
+   #page-content-wrapper {
+      padding: 20px;
+      position: relative;
+      -webkit-transition: all 0.5s ease;
+      -moz-transition: all 0.5s ease;
+      -o-transition: all 0.5s ease;
+      transition: all 0.5s ease;
+   }
+   #wrapper.toggled #page-content-wrapper {
+      position: relative;
+      margin-right: 0;
+      padding-left: 250px;
+   }
+   #wrapper.toggled-2 #page-content-wrapper {
+      position: relative;
+      margin-right: 0;
+      margin-left: -200px;
+      -webkit-transition: all 0.5s ease;
+      -moz-transition: all 0.5s ease;
+      -o-transition: all 0.5s ease;
+      transition: all 0.5s ease;
+      width: auto;
+   }
+}
+</style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+  
+  
+  <script>
+  if (document.location.search.match(/type=embed/gi)) {
+    window.parent.postMessage("resize", "*");
+  }
+</script>
+
+<!-- <script type="text/javascript">
+   setTimeout(function(){
+     location = ''
+   },1000)
+ </script> -->
+</head>
+
+<body translate="no" >
+  <head>
+   <link rel="stylesheet" href="fontawesome-free-5.15.4-web/css/all.css">
+</head>
+
+<body onload="UPDATEINFO()">
+   <nav class="navbar navbar-default no-margin">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header fixed-brand">
+         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" id="menu-toggle">
+<span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
+</button>
+         <a class="navbar-brand" href="#"><i class="fa fa-wrench fa-4"></i> Q-Plotter V1.2 Beta </a>
+      </div>
+      <!-- navbar-header-->
+
+      <!-- bs-example-navbar-collapse-1 -->
+   </nav>
+  
+     
+      <!-- Page Content -->
+      <div id="page-content-wrapper">
+         <div class="container-fluid xyz">
+            <div class="row" >
+               <div class="col-sm-1 panel panel-info">
+                <!-- <h3 class="panel-heading">FUNCTIONS</h3> -->
+
+                <button type="button"  class="btn btn-info" style="margin-top: 0.3em;margin-bottom: 0.3em;" data-toggle="modal" data-target="#ModalJog" ><span style="cursor: pointer;font-size: 2em;" class="glyphicon glyphicon-expand"></span></button>
+                <button type="button" class="btn btn-info" style="margin-top: 0.3em;margin-bottom: 0.3em;" data-toggle="modal" data-target="#ModalSpeed"><span style="cursor: pointer;font-size: 2em;" class="glyphicon glyphicon-equalizer"></span></button>
+                <button type="button" class="btn btn-info" style="margin-top: 0.3em;margin-bottom: 0.3em;" data-toggle="modal" data-target="#ModalBullseye"><span style="cursor: pointer;font-size: 2em;" class="glyphicon glyphicon-eye-open"></span></button>
+
+                <!-- <div class="mb-3">
+                  <label for="formFile" class="form-label">Tool Selection:</label>
+                  <div class="mb-3"  style="margin-bottom:10px;margin-top: 10px;">
+                  <button id="toolpen" class="btn btn-primary" onclick="ToolPen()">Pen</button>
+                  <button id="toollaser" class="btn btn-primary" onclick="ToolLaser()">Laser</button>
+                  <button id="toolstring" class="btn btn-primary" onclick="ToolString()">String</button>
+                  </div>
+                </div> -->
+               
+                
+                  
+
+                 
+
+                <div>
+                    <!-- <button onclick="UPDATEINFO()">Refresh</button> -->
+                    <!-- <iframe src="http://127.0.0.1:5500/Plotter%20Web%20UX/svgviewer.html" frameborder="0"></iframe> -->
+                </div>
+               </div>
+               <div class="col-sm-10 panel panel-info">
+                <!-- <h3 class="panel-heading text-center">MAIN</h3> -->
+                
+                <div class="progress">
+                  <div id="percentage" class="progress-bar progress-bar-striped progress-bar-success active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                    
+                  </div>
+                </div>
+                <div class="mb-3">
+                    <input class="form-control" type="file" id="gcodefile">
+                 
+                    <button id="btn1" class="btn btn-success" style="margin-bottom:10px;margin-top: 10px;" onclick="GcodeFileRun()">Run</button>
+                    <button id="btn2" class="btn btn-danger" style="margin-bottom:10px;margin-top: 10px;" onclick="GcodeFileStop()">Stop</button>
+                    <button  id="btn3" class="btn btn-warning" style="margin-bottom:10px;margin-top: 10px;" onclick="GcodeFilePause()">Pause</button>
+                    <button id="btn4" class="btn btn-info" style="margin-bottom:10px;margin-top: 10px;" onclick="GcodeFileResume()">Resume</button>
+                    <button id="btn5" class="btn btn-primary" style="margin-bottom:10px;margin-top: 10px;" data-toggle="modal" data-target="#ModalLayer">Layer Selection</button>
+                    </div>
+               
+                    <!-- <div class="panel-heading text-center" style="margin-top: 10px;margin-bottom: 10px;" >LAYERS VIEW</div> -->
+
+                
+                  <div id="layerviewer" class="col-sm-12" style="overflow: scroll;" >
+                  </div>
+            </div>
+            <script>
+               var fxbuttons = document.getElementsByName("fxbutton");
+            </script>
+            <div class="col-sm-1 panel panel-info">
+                <!-- <h3 class="panel-heading">console</h3> -->
+                <!-- Message: <input type="text" id="myText" >
+                <button onclick="sendMsg()">Send Msg</button> -->
+                <button type="button"  class="btn btn-info" style="margin-top: 0.3em;margin-bottom: 0.3em;" data-toggle="modal" data-target="#ModalConsole" ><span style="cursor: pointer;font-size: 2em;" class="glyphicon glyphicon-text-size"></span></button>
+                <button type="button"  class="btn btn-info" style="margin-top: 0.3em;margin-bottom: 0.3em;" data-toggle="modal" data-target="#ModalReset" ><span style="cursor: pointer;font-size: 2em;" class="glyphicon glyphicon-warning-sign"></span></button>
+                <button type="button"  class="btn btn-info" style="margin-top: 0.3em;margin-bottom: 0.3em;" data-toggle="modal" data-target="#ModalDev" ><span style="cursor: pointer;font-size: 2em;" class="glyphicon glyphicon-search"></span></button>
+            </div>
+            </div>
+         </div>
+      </div>
+      <!-- /#page-content-wrapper -->
+
+   <!-- /#wrapper -->
+   <!-- jQuery -->
+
+  
+  <!-- Modal Jog -->
+  <div class="modal fade" id="ModalJog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">JOG FUNCTIONS</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          
+            <button name="fxbutton" class="btn btn-warning" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="JOGLEFT();increasey()"><span  id="JOGRIGHTid"style="cursor: pointer;font-size: 2em;" href="#" class="glyphicon glyphicon-circle-arrow-left"></span></button>
+            <button name="fxbutton" class="btn btn-warning" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="JOGRIGHT();decreasey();"><span  id="JOGLEFTid" style="cursor: pointer;font-size: 2em;" class="glyphicon glyphicon-circle-arrow-right"></span></button>
+            <button name="fxbutton" class="btn btn-warning" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="JOGFORWARD();decreasex();"><span  id="JOGFORWARDid"style="cursor: pointer;font-size: 2em;" href="#" class="glyphicon glyphicon-circle-arrow-up"></span></button>
+            <button name="fxbutton" class="btn btn-warning" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="JOGREVERSE();increasex()"><span  id="JOGREVERSEid"style="cursor: pointer;font-size: 2em;" href="#" class="glyphicon glyphicon-circle-arrow-down"></span></button>
+            <button name="fxbutton" class="btn btn-success" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="PENUP()"><span  style="cursor: pointer;font-size: 2em;" href="#" class="glyphicon glyphicon-hand-up"></span></button>
+            <button name="fxbutton" class="btn btn-success" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="PENDOWN()"><span  style="cursor: pointer;font-size: 2em;" href="#" class="glyphicon glyphicon-hand-down"></span></button>
+           <div>
+                 
+                <label for="customRange1" class="form-label">Jog Speed (mm/s) : <span id="JOGSPEEDid"></span></label><input type="range" class="form-range" id="JogSpeedRange" min="1" max="1000" value="10">
+                <label for="customRange1" class="form-label">Jog Distance (mm) : <span id="JOGDISTANCEid"></span></label><input type="range" class="form-range" id="JogDistanceRange" min="1" max="1000" value="10">
+                     <script>
+var slider = document.getElementById("JogSpeedRange");
+var output = document.getElementById("JOGSPEEDid");
+output.innerHTML = slider.value;
+slider.oninput = function() {output.innerHTML = this.value;}
+
+var slider2 = document.getElementById("JogDistanceRange");
+var output2 = document.getElementById("JOGDISTANCEid");
+output2.innerHTML = slider2.value;
+slider2.oninput = function() {output2.innerHTML = this.value;}
+
+                     </script>
+                
+                
+               
+               </div>   
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Pin Tab</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Speed -->
+  <div class="modal fade" id="ModalSpeed" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">SPEED SELECTION</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          
+            <div class="mb-3">
+                <div class="mb-3"  style="margin-bottom:10px;margin-top: 10px;">
+                <button id="speedlow" class="btn btn-info" onclick="SpeedLow()">Low</button>
+                <button id="speedmedium" class="btn btn-info" onclick="SpeedMedium()">Medium</button>
+                <button id="speedhigh" class="btn btn-info" onclick="SpeedHigh()">High</button>
+                </div>
+              </div>
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Pin Tab</button>
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- Modal Bullseye -->
+ <div class="modal fade" id="ModalBullseye" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">BULLSEYE</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          
+       <div class="mb-3">
+                <button id="bull5" class="btn btn-danger" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="BullseyeEnable()" ><span style="cursor: pointer;font-size: 2em;" class="glyphicon glyphicon-eye-open"></span></button>
+                <button id="bull4" class="btn btn-danger" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="BullseyeDisable()"><span  style="cursor: pointer;font-size: 2em;" class="glyphicon glyphicon-eye-close"></span></button>
+                <button id="bull1" class="btn btn-info" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="PrevLine()"><span  style="cursor: pointer;font-size: 2em;" class="glyphicon glyphicon-fast-backward"></span></button>
+                <button id="bull2" class="btn btn-info" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="NextLine()"><span  style="cursor: pointer;font-size: 2em;" class="glyphicon glyphicon-fast-forward"></span></button>
+                <button id="bull3" class="btn btn-success" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="BullseyeGo()"><span  style="cursor: pointer;font-size: 2em;" class="glyphicon glyphicon-play"></span></button>
+               
+             </div>
+   
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Pin Tab</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <!-- Modal Console -->
+ <div class="modal fade" id="ModalConsole" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">CONSOLE</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <h5 id="consolemsg" style="height:40vh ; overflow:auto;"></h5>
+            <button class="btn btn-info" style="margin-bottom:10px" onclick="clearLog()">Clear Log</button>
+           <br>
+           <input type="text" id="gcodecommand" placeholder="G-code command">
+           <button class="btn btn-info" style="margin-bottom:10px;margin-top: 10px;" onclick="submitGcode()">RUN</button>
+
+   
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <!-- Modal Reset -->
+ <div class="modal fade" id="ModalReset" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">SYSTEM CONTROL</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <button name="fxbutton" class="btn btn-danger" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="UNLOCK()"><span  style="cursor: pointer;font-size: 2em;" href="#" class="glyphicon glyphicon-link"></span></button>
+            <button name="fxbutton" class="btn btn-danger" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="SOFTRESET()"><span  style="cursor: pointer;font-size: 2em;" href="#" class="glyphicon glyphicon-refresh"></span></button>
+            
+   
+   
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+   <!-- Modal Dev -->
+ <div class="modal fade" id="ModalDev" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">PARAMETER SET</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <button name="fxbutton" class="btn btn-info" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="GOHOME();AnimatePoint(40,850);"><span  style="cursor: pointer;font-size: 2em;" href="#" class="glyphicon glyphicon-home"></span></button>
+            <button name="fxbutton" class="btn btn-info" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="GOZERO()"><span  style="cursor: pointer;font-size: 2em;" href="#" class="glyphicon glyphicon-move"></span></button>
+            <button name="fxbutton" class="btn btn-info" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="SQUARE()"><span  style="cursor: pointer;font-size: 2em;" href="#" class="glyphicon glyphicon-fullscreen"></span></button>
+            <button name="fxbutton" class="btn btn-info" style="margin-top: 0.3em;margin-bottom: 0.3em;"onclick="SETZERO()"><span  style="cursor: pointer;font-size: 2em;" href="#" class="glyphicon glyphicon-screenshot"></span></button>
+            
+   
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+   <!-- Modal Layer -->
+   <div class="modal fade" id="ModalLayer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">LAYER SELECTION</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="layerSelect" >
+           
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="checkAllButton">Check All</button>
+          <button type="button" class="btn btn-secondary" id="uncheckAllButton">Uncheck All</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="checkCheckbox()">Save changes</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
+   
+<script>
+const myDiv2 = document.getElementById('layerSelect');
+const checkAllButton = document.getElementById('checkAllButton');
+const uncheckAllButton = document.getElementById('uncheckAllButton');
+
+checkAllButton.addEventListener('click', function() {
+  const checkboxes = myDiv2.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach(function(checkbox) {
+    checkbox.checked = true;
+  });
+});
+
+uncheckAllButton.addEventListener('click', function() {
+  const checkboxes = myDiv2.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach(function(checkbox) {
+    checkbox.checked = false;
+  });
+});
+
+
+
+</script>
+  <script src='jquery.js'></script>
+<script src='bootstrap-3.3.7-dist/js/bootstrap.js'></script>
+      <script id="rendered-js" >
+$("#menu-toggle").click(function (e) {
+  e.preventDefault();
+  $("#wrapper").toggleClass("toggled");
+});
+$("#menu-toggle-2").click(function (e) {
+  e.preventDefault();
+  $("#wrapper").toggleClass("toggled-2");
+  $('#menu ul').hide();
+});
+
+function initMenu() {
+  $('#menu ul').hide();
+  $('#menu ul').children('.current').parent().show();
+  //$('#menu ul:first').show();
+  $('#menu li a').click(
+  function () {
+    var checkElement = $(this).next();
+    if (checkElement.is('ul') && checkElement.is(':visible')) {
+      return false;
+    }
+    if (checkElement.is('ul') && !checkElement.is(':visible')) {
+      $('#menu ul:visible').slideUp('normal');
+      checkElement.slideDown('normal');
+      return false;
+    }
+  });
+
+}
+$(document).ready(function () {
+  initMenu();
+});
+//# sourceURL=pen.js
+    </script>
+<script>
+   var layerCoord;
+   var layerCoordX;
+   var layerCoordY;
+   var xStart;
+   var xFinish;
+   var yStart;
+   var yFinish;
+   var drawState;
+   let Arraylength;
+   var scallop;
+   let xlay=0;
+   let ylay=0;
+   let smallestx=99999;
+   let smallesty=99999;
+   let largestx=0;
+   let largesty=0;
+   let largestdim=0;
+   var mposx=0.00;
+   var mposy=0.00;
+
+   var bullseyex=0.00;
+   var bullseyey=0.00;
+    // Create WebSocket connection.
+    const socket = new WebSocket('ws://localhost:5000');
+
+    // Connection opened
+    socket.addEventListener('open', function (event) {
+        console.log('Connected to the WS Server!')
+    });
+
+    // Connection closed
+    socket.addEventListener('close', function (event) {
+        console.log('Disconnected from the WS Server!')
+    });
+
+
+    // Send a msg to the websocket
+    const sendMsg = () => {
+       
+        var tempmsg = document.getElementById("myText").value
+        socket.send(tempmsg);
+    }
+//-------------data received---------------------------
+    // Listen for messages
+    socket.addEventListener('message', function (event) {
+        var DataArray = event.data;
+        if(DataArray.includes("CONSOLE")){
+         var consoledata=DataArray.replace('CONSOLE','');
+         document.getElementById("consolemsg").innerHTML=consoledata;
+        console.log('Message from server ', consoledata);
+        }
+        if(DataArray.includes("All_Layer")){
+         var layerData=DataArray.replace('All_Layer/','');
+         var layerNumber=layerData.split("/").length;
+         var layerList=layerData.split("/");
+         //document.getElementById("consolemsg").innerHTML=consoledata;
+        //console.log('Message from server ', consoledata);
+        for (var i = 0; i <= (layerNumber-1); i++){
+var checkbox = document.createElement('input');
+checkbox.type = "checkbox";
+checkbox.id = layerList[i];
+
+var label = document.createElement('label');
+label.setAttribute('for', 'myCheckbox');
+label.appendChild(document.createTextNode(layerList[i]));
+
+var lineBreak = document.createElement("br");
+var space = document.createTextNode("\u00a0");
+var div = document.getElementById('layerSelect');
+div.appendChild(checkbox);
+div.appendChild(space);
+div.appendChild(label);
+div.appendChild(lineBreak);
+
+        }
+
+        }
+        if(DataArray.includes("PERCENTAGE")){
+         var percentage=DataArray.replace('PERCENTAGE','');
+         document.getElementById("percentage").innerHTML=(percentage+"%");
+         document.getElementById("percentage").style.width=(percentage+"%");
+        console.log('Message from server ', percentage);
+        }
+        if(DataArray.includes("MPOSITION")){
+         DataArray=DataArray.replace('MPOSITION','');
+         var posData=DataArray.split("/");
+         mposx=(+posData[0]);
+         mposy=(+posData[1]);
+
+        }
+        if(DataArray.includes("BULLSEYEPOSITION")){
+         DataArray=DataArray.replace('BULLSEYEPOSITION','');
+         var bullData=DataArray.split("/");
+         bullseyex=(+bullData[0]);
+         bullseyey=(+bullData[1]);
+
+        }
+        if(DataArray.includes("LAYERVIEW")){
+            xlay=0;
+           ylay=0;
+           smallestx=99999;
+           smallesty=99999;
+           largestx=0;
+           largesty=0;
+            largestdim=0;
+         var layerdata=DataArray.replace('LAYERVIEW ','');
+         const layerArray=layerdata.split(",");
+         Arraylength=layerArray.length;
+         layerCoord=makeArray(5,Arraylength);
+         xStart=makeArray(1,Arraylength);
+         yStart=makeArray(1,Arraylength);
+         xFinish=makeArray(1,Arraylength);
+         yFinish=makeArray(1,Arraylength);
+         drawState=makeArray(1,Arraylength);
+         layerCoordX=makeArray(1,Arraylength);
+         layerCoordY=makeArray(1,Arraylength);
+         for(let i =0; i<Arraylength;i++){
+            let tempval=layerArray[i].split(" ");
+            // layerCoord[i][0]=(+tempval[0]);
+            // layerCoord[i][1]=(+tempval[1]);
+            // xlay+=(+tempval[0]);
+            // ylay+=(+tempval[1]);
+            // layerCoordX[i]=xlay;
+            // layerCoordY[i]=ylay;
+            layerCoordX[i]=(+tempval[0]);
+            layerCoordY[i]=(+tempval[1]);
+
+            xStart[i]=(+tempval[0]);
+            yStart[i]=(+tempval[1]);
+            xFinish[i]=(+tempval[2]);
+            yFinish[i]=(+tempval[3]);
+            drawState[i]=(+tempval[4]);
+            
+            for(var p=0;p<layerCoordX.length;p++){
+               if(largestx<layerCoordX[p]){largestx=layerCoordX[p];}
+               if(smallestx>layerCoordX[p]){smallestx=layerCoordX[p];}
+            }
+            for(var p=0;p<layerCoordY.length;p++){
+               if(largesty<layerCoordY[p]){largesty=layerCoordY[p];}
+               if(smallesty>layerCoordY[p]){smallesty=layerCoordY[p];}
+            }
+            // if(largestx>largesty){largestdim=largestx;}
+            // if(largesty>largestx){largestdim=largesty;}
+            var thetax=0-smallestx
+            var thetay=0-smallesty
+            for(var px=0;px<layerCoordX.length;px++){
+               layerCoordX[px]=layerCoordX[px]-thetax
+            }
+            for(var py=0;py<layerCoordY.length;py++){
+               layerCoordY[py]=layerCoordY[py]-thetay
+            }
+
+            const maxValueX = layerCoordX.reduce((a, b) => {
+            return Math.max(a, b < 123456 ? b : -Infinity);
+            }, -Infinity);
+            const maxValueY = layerCoordY.reduce((a, b) => {
+            return Math.max(a, b < 123456 ? b : -Infinity);
+            }, -Infinity);
+
+            var globalscale = 0
+            if(maxValueX>maxValueY){
+               globalscale=400/maxValueX;
+               scallop=globalscale;
+            }
+            if(maxValueY>maxValueX){
+               globalscale=400/maxValueY;
+               scallop=globalscale;
+
+            }
+            if(maxValueX==maxValueY){
+               globalscale=400/maxValueY;
+               scallop=globalscale;
+            }
+            //scallop=0.3           
+
+         }
+         console.log(layerCoord);
+         
+    }
+
+    });
+    function makeArray(d1, d2) {
+    var arr = new Array(d1), i, l;
+    for(i = 0, l = d2; i < l; i++) {
+        arr[i] = new Array(d1);
+    }
+    return arr;
+}
+
+//    -------------command list-------------
+   
+    const clearLog = () => {socket.send("commandCLEARLOG");}
+    const UPDATEINFO = () => {socket.send("commandUPDATE");}
+    const JOGLEFT = () => {
+   var jogspeed = document.getElementById("JogSpeedRange");
+   var jogdistance =  document.getElementById("JogDistanceRange");
+   var speedjog = jogspeed.value;
+   var distancejog = jogdistance.value;
+   socket.send("JOGLEFT,"+distancejog+";"+speedjog+"~");
+   }
+   const JOGRIGHT = () => {
+   var jogspeed = document.getElementById("JogSpeedRange");
+   var jogdistance =  document.getElementById("JogDistanceRange");
+   var speedjog = jogspeed.value;
+   var distancejog = jogdistance.value;
+   socket.send("JOGRIGHT,"+distancejog+";"+speedjog+"~");
+   }
+   const JOGFORWARD = () => {
+   var jogspeed = document.getElementById("JogSpeedRange");
+   var jogdistance =  document.getElementById("JogDistanceRange");
+   var speedjog = jogspeed.value;
+   var distancejog = jogdistance.value;
+   socket.send("JOGFORWARD,"+distancejog+";"+speedjog+"~");
+   }
+   const JOGREVERSE = () => {
+   var jogspeed = document.getElementById("JogSpeedRange");
+   var jogdistance =  document.getElementById("JogDistanceRange");
+   var speedjog = jogspeed.value;
+   var distancejog = jogdistance.value;
+   socket.send("JOGREVERSE,"+distancejog+";"+speedjog+"~");
+   }
+   const PENUP = () => {
+   socket.send("PENUP");
+   }
+   const PENDOWN = () => {
+   socket.send("PENDOWN");
+   }
+    const GOHOME = () => {socket.send("GOHOME");}
+    const UNLOCK = () => {socket.send("UNLOCK");}
+    const SQUARE = () => {socket.send("SQUARE");}
+    const GOZERO = () => {socket.send("GOZERO");}
+    const SETZERO = () => {socket.send("SETZERO");}
+    const SOFTRESET = () => {socket.send("SOFTRESET");}
+    const SpeedLow = () => {socket.send("speedLOW");}
+    const SpeedMedium = () => {socket.send("speedMEDIUM");}
+    const SpeedHigh = () => {socket.send("speedHIGH");}
+
+    const NextLine = () => {socket.send("BULLSEYEnextline");}
+    const PrevLine = () => {socket.send("BULLSEYEprevline");}
+    const BullseyeGo = () => {socket.send("BULLSEYEgo");}
+    const BullseyeEnable = () => {socket.send("BULLSEYEenable");button1.disabled=true;buttonbull1.disabled=false;buttonbull2.disabled=false;buttonbull3.disabled=false;buttonbull4.disabled=false;buttonbull5.disabled=true;}
+    const BullseyeDisable = () => {socket.send("BULLSEYEdisable");button1.disabled=false;buttonbull1.disabled=true;buttonbull2.disabled=true;buttonbull3.disabled=true;buttonbull4.disabled=true;buttonbull5.disabled=false;}
+
+    const checkCheckbox = () =>{
+var initName="LAYERSELECTED";
+var div = document.getElementById("layerSelect");
+var checkboxes = div.querySelectorAll("input[type='checkbox']");
+
+for (var i = 0; i < checkboxes.length; i++) {
+var localId=checkboxes[i].id;
+var checkbox = document.getElementById(localId);
+if (checkbox.checked) {
+    initName+="/";
+    initName+=localId;
+  }
+}
+socket.send(initName);
+    }
+
+
+    const submitGcode = () => {
+      let gcommand=document.getElementById("gcodecommand").value
+      socket.send("GCODE"+gcommand);
+      document.getElementById("gcodecommand").value=""
+
+   }
+    const GcodeFileRun = () =>{
+      if (confirm('Please confirm that the machine are set to home and there are no obstructions inside plotting area.')) {
+      socket.send("STARTPLOT");
+      button1.disabled=true; 
+      button2.disabled=false;
+      button3.disabled=false;
+      button4.disabled=true;
+
+buttonbull1.disabled=true;
+buttonbull2.disabled=true;
+buttonbull3.disabled=true;
+buttonbull4.disabled=true;
+buttonbull5.disabled=true;
+
+      for (var i = 0; i < fxbuttons.length; i++) {fxbuttons[i].disabled = true;}
+} else { }}
+    const GcodeFileStop = () =>{
+      if(confirm('Stopping the process would require you to start from the beginning.')){
+      socket.send("STOPPLOT");
+      button1.disabled=false; 
+      button2.disabled=true;
+      button3.disabled=true;
+      button4.disabled=true;
+
+buttonbull1.disabled=false;
+buttonbull2.disabled=false;
+buttonbull3.disabled=false;
+buttonbull4.disabled=true;
+buttonbull5.disabled=false;
+
+      for (var i = 0; i < fxbuttons.length; i++) {fxbuttons[i].disabled = false;}
+   }
+      else{}
+   }
+    const GcodeFilePause = () =>{socket.send("PAUSEPLOT");button1.disabled=true; 
+     // button2.disabled=true;
+      button3.disabled=true;
+      button4.disabled=false;}
+    const GcodeFileResume = () =>{socket.send("RESUMEPLOT");
+    //button1.disabled=true; 
+    //button2.disabled=false;
+      button3.disabled=false;
+      button4.disabled=true;}
+//-------FTP-------------------
+
+document.getElementById('gcodefile')
+            .addEventListener('change', function() {
+              
+            var fullPath = document.getElementById('gcodefile').value;
+            if (fullPath) {
+            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+            var filename = fullPath.substring(startIndex);
+             if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+            filename = filename.substring(1);}
+
+            var fr=new FileReader();
+            fr.onload=function(){
+               let opener="filestart";
+               let closer="fileend";
+               let gcode=fr.result;
+               let gcodecmd= opener.concat("#&%",filename,"%&#"," ",gcode," ",closer);
+               socket.send(gcodecmd);
+            }
+              
+            fr.readAsText(this.files[0]);
+            
+         
+            alert("Succesfully uploaded : "+filename);
+            button1.disabled=false;
+            buttonbull5.disabled=false;
+
+}
+        })
+    
+//------------QOL improvement----------------------
+button1 = document.getElementById("btn1");
+button2 = document.getElementById("btn2");
+button3 = document.getElementById("btn3");
+button4 = document.getElementById("btn4");
+buttonbull1=document.getElementById("bull1");
+buttonbull2=document.getElementById("bull2");
+buttonbull3=document.getElementById("bull3");
+buttonbull4=document.getElementById("bull4");
+buttonbull5=document.getElementById("bull5");
+
+button1.disabled=true;
+button2.disabled=true;
+button3.disabled=false;
+button4.disabled=false;
+
+buttonbull1.disabled=true;
+buttonbull2.disabled=true;
+buttonbull3.disabled=true;
+buttonbull4.disabled=true;
+buttonbull5.disabled=true;
+
+
+
+tool1 = document.getElementById("toolpen");
+tool2 = document.getElementById("toollaser");
+tool3 = document.getElementById("toolstring");
+function ToolPen(){
+   tool1.classList.add("btn-danger")
+   tool2.classList.remove("btn-danger")
+   tool3.classList.remove("btn-danger")
+}
+function ToolLaser(){
+   tool1.classList.remove("btn-danger")
+   tool2.classList.add("btn-danger")
+   tool3.classList.remove("btn-danger")
+}
+function ToolString(){
+   tool1.classList.remove("btn-danger")
+   tool2.classList.remove("btn-danger")
+   tool3.classList.add("btn-danger")
+}
+
+
+
+var btn1 = document.getElementById("JOGLEFTid");
+var intervalID1; // Declare a variable to store the interval ID
+
+btn1.addEventListener("mousedown", function() {
+  // Call the function repeatedly while the button is being pressed
+  intervalID1 = setInterval(decreasey, 100); // 100ms interval
+});
+btn1.addEventListener("mouseup", function() {
+  // Clear the interval when the button is released
+  clearInterval(intervalID1);
+});
+
+var btn2 = document.getElementById("JOGRIGHTid");
+var intervalID2; // Declare a variable to store the interval ID
+
+btn2.addEventListener("mousedown", function() {
+  // Call the function repeatedly while the button is being pressed
+  intervalID2 = setInterval(increasey, 100); // 100ms interval
+});
+btn2.addEventListener("mouseup", function() {
+  // Clear the interval when the button is released
+  clearInterval(intervalID2);
+});
+
+var btn3 = document.getElementById("JOGFORWARDid");
+var intervalID3; // Declare a variable to store the interval ID
+
+btn3.addEventListener("mousedown", function() {
+  // Call the function repeatedly while the button is being pressed
+  intervalID3 = setInterval(decreasex, 100); // 100ms interval
+});
+btn3.addEventListener("mouseup", function() {
+  // Clear the interval when the button is released
+  clearInterval(intervalID3);
+});
+
+var btn4 = document.getElementById("JOGREVERSEid");
+var intervalID4; // Declare a variable to store the interval ID
+
+btn4.addEventListener("mousedown", function() {
+  // Call the function repeatedly while the button is being pressed
+  intervalID4 = setInterval(increasex, 100); // 100ms interval
+});
+btn4.addEventListener("mouseup", function() {
+  // Clear the interval when the button is released
+  clearInterval(intervalID4);
+});
+
+</script>
+  
+<script>
+    const myDiv = document.getElementById("layerviewer");
+  let panelWidth = myDiv.clientWidth;
+  let panelHeight = myDiv.clientHeight;
+  let globalWidth =screen.width;
+  let globalHeight=screen.height;
+</script>
+</body>
+
+</html>
+ 
